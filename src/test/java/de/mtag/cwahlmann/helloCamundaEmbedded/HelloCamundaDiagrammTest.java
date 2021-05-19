@@ -31,12 +31,14 @@ public class HelloCamundaDiagrammTest {
         throw new BpmnError("TEST-CODE", "TEST-MESSAGE");
     };
     public static final String ERFASSE_DATEN_TASK = "ErfasseDatenTask";
-    public static final String PRUFE_ALTER_TASK = "PrufeAlterTask";
     public static final String ZEIGE_FILM_TASK = "ZeigeFilmTask";
     public static final String VERTEILE_POPKORN_TASK = "VerteilePopkornTask";
     public static final String ZEIGE_AUSGANG_TASK = "ZeigeAusgangTask";
 
-    public static final Map<String, Object> TASK_TEST_DATA = withVariables("vorname", "TESTNAME", "alter", 15, "saal", "TESTSAAL");
+    public static final Map<String, Object> TASK_TEST_DATA = withVariables(
+            "vorname", "TESTNAME",
+            "alter", 15,
+            "saal", "TESTSAAL");
     public ProcessEngine processEngine;
 
     @BeforeEach
