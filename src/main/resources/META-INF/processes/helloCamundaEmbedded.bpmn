@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_00bfx9e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
   <bpmn:collaboration id="Collaboration_12djvka">
-    <bpmn:participant id="Participant_055s04j" name="HELLO.CAMUNDA.EMBEDDED" processRef="HELLO.CAMUNDA.EMBEDDED" />
+    <bpmn:participant id="HELLOCAMUNDAEMBEDDEDParticipant" name="HELLO.CAMUNDA.EMBEDDED" processRef="HELLO.CAMUNDA.EMBEDDED" />
   </bpmn:collaboration>
   <bpmn:process id="HELLO.CAMUNDA.EMBEDDED" name="" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0kfev9u</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_0kfev9u" sourceRef="StartEvent_1" targetRef="Activity_0tmplqb" />
-    <bpmn:userTask id="Activity_0tmplqb" name="Erfasse Daten" camunda:asyncBefore="true" camunda:assignee="demo">
+    <bpmn:sequenceFlow id="Flow_0kfev9u" sourceRef="StartEvent_1" targetRef="ErfasseDatenTask" />
+    <bpmn:userTask id="ErfasseDatenTask" name="Erfasse Daten" camunda:asyncBefore="true" camunda:assignee="demo">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="saalValue">${saal}</camunda:outputParameter>
@@ -29,28 +29,28 @@
       <bpmn:incoming>Flow_0kfev9u</bpmn:incoming>
       <bpmn:outgoing>Flow_1yb8btm</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_1yb8btm" sourceRef="Activity_0tmplqb" targetRef="Activity_1u0638w" />
-    <bpmn:sequenceFlow id="Flow_1dpglc3" sourceRef="Activity_1u0638w" targetRef="Gateway_0gtbu2n" />
-    <bpmn:sequenceFlow id="Flow_1rlkdta" sourceRef="Event_0cwim2t" targetRef="Activity_1vo2sry" />
-    <bpmn:sequenceFlow id="Flow_0damwg9" sourceRef="Activity_1vo2sry" targetRef="Event_19507g1" />
-    <bpmn:sequenceFlow id="Flow_1bh53r4" sourceRef="Activity_11hk3nr" targetRef="Gateway_1wygwx4" />
-    <bpmn:serviceTask id="Activity_1u0638w" name="Prüfe Alter" camunda:delegateExpression="${pruefeAlterDelegate}">
+    <bpmn:sequenceFlow id="Flow_1yb8btm" sourceRef="ErfasseDatenTask" targetRef="PrufeAlterTask" />
+    <bpmn:sequenceFlow id="Flow_1dpglc3" sourceRef="PrufeAlterTask" targetRef="Gateway_0gtbu2n" />
+    <bpmn:sequenceFlow id="Flow_1rlkdta" sourceRef="Event_0cwim2t" targetRef="ZeigeAusgangTask" />
+    <bpmn:sequenceFlow id="Flow_0damwg9" sourceRef="ZeigeAusgangTask" targetRef="FilmVerweigertEndEvent" />
+    <bpmn:sequenceFlow id="Flow_1bh53r4" sourceRef="ZeigeFilmTask" targetRef="Gateway_1wygwx4" />
+    <bpmn:serviceTask id="PrufeAlterTask" name="Prüfe Alter" camunda:delegateExpression="${pruefeAlterDelegate}">
       <bpmn:incoming>Flow_1yb8btm</bpmn:incoming>
       <bpmn:outgoing>Flow_1dpglc3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_0cwim2t" attachedToRef="Activity_1u0638w">
+    <bpmn:boundaryEvent id="Event_0cwim2t" attachedToRef="PrufeAlterTask">
       <bpmn:outgoing>Flow_1rlkdta</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0ja4fcs" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_0cfgr2e" sourceRef="Gateway_0gtbu2n" targetRef="Activity_11hk3nr" />
-    <bpmn:serviceTask id="Activity_11hk3nr" name="Zeige Film" camunda:asyncBefore="true" camunda:delegateExpression="${zeigeFilmDelegate}">
+    <bpmn:sequenceFlow id="Flow_0cfgr2e" sourceRef="Gateway_0gtbu2n" targetRef="ZeigeFilmTask" />
+    <bpmn:serviceTask id="ZeigeFilmTask" name="Zeige Film" camunda:asyncBefore="true" camunda:delegateExpression="${zeigeFilmDelegate}">
       <bpmn:incoming>Flow_0cfgr2e</bpmn:incoming>
       <bpmn:outgoing>Flow_1bh53r4</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1exnz5z" sourceRef="Gateway_1wygwx4" targetRef="Event_06nl66s" />
-    <bpmn:sequenceFlow id="Flow_0klqga2" sourceRef="Gateway_0gtbu2n" targetRef="Activity_194l493" />
-    <bpmn:sequenceFlow id="Flow_1qn0qg7" sourceRef="Activity_194l493" targetRef="Gateway_1wygwx4" />
-    <bpmn:serviceTask id="Activity_194l493" name="Verteile Popkorn" camunda:asyncBefore="true" camunda:delegateExpression="${verteilePopkornDelegate}">
+    <bpmn:sequenceFlow id="Flow_1exnz5z" sourceRef="Gateway_1wygwx4" targetRef="FilmGezeigtEndEvent" />
+    <bpmn:sequenceFlow id="Flow_0klqga2" sourceRef="Gateway_0gtbu2n" targetRef="VerteilePopkornTask" />
+    <bpmn:sequenceFlow id="Flow_1qn0qg7" sourceRef="VerteilePopkornTask" targetRef="Gateway_1wygwx4" />
+    <bpmn:serviceTask id="VerteilePopkornTask" name="Verteile Popkorn" camunda:asyncBefore="true" camunda:delegateExpression="${verteilePopkornDelegate}">
       <bpmn:incoming>Flow_0klqga2</bpmn:incoming>
       <bpmn:outgoing>Flow_1qn0qg7</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -64,20 +64,20 @@
       <bpmn:incoming>Flow_1qn0qg7</bpmn:incoming>
       <bpmn:outgoing>Flow_1exnz5z</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Activity_1vo2sry" name="Zeige Ausgang" camunda:asyncBefore="true" camunda:delegateExpression="${zeigeAusgangDelegate}">
+    <bpmn:serviceTask id="ZeigeAusgangTask" name="Zeige Ausgang" camunda:asyncBefore="true" camunda:delegateExpression="${zeigeAusgangDelegate}">
       <bpmn:incoming>Flow_1rlkdta</bpmn:incoming>
       <bpmn:outgoing>Flow_0damwg9</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_06nl66s" name="Film gezeigt">
+    <bpmn:endEvent id="FilmGezeigtEndEvent" name="Film gezeigt">
       <bpmn:incoming>Flow_1exnz5z</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:endEvent id="Event_19507g1" name="Film verweigert">
+    <bpmn:endEvent id="FilmVerweigertEndEvent" name="Film verweigert">
       <bpmn:incoming>Flow_0damwg9</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_12djvka">
-      <bpmndi:BPMNShape id="Participant_055s04j_di" bpmnElement="Participant_055s04j" isHorizontal="true">
+      <bpmndi:BPMNShape id="Participant_055s04j_di" bpmnElement="HELLOCAMUNDAEMBEDDEDParticipant" isHorizontal="true">
         <dc:Bounds x="129" y="100" width="951" height="430" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0kfev9u_di" bpmnElement="Flow_0kfev9u">
@@ -126,16 +126,16 @@
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="202" y="172" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ifqi42_di" bpmnElement="Activity_0tmplqb">
+      <bpmndi:BPMNShape id="Activity_0ifqi42_di" bpmnElement="ErfasseDatenTask">
         <dc:Bounds x="290" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_044ms7h_di" bpmnElement="Activity_1u0638w">
+      <bpmndi:BPMNShape id="Activity_044ms7h_di" bpmnElement="PrufeAlterTask">
         <dc:Bounds x="450" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1k5xui9_di" bpmnElement="Activity_11hk3nr">
+      <bpmndi:BPMNShape id="Activity_1k5xui9_di" bpmnElement="ZeigeFilmTask">
         <dc:Bounds x="720" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_10gy6at_di" bpmnElement="Activity_194l493">
+      <bpmndi:BPMNShape id="Activity_10gy6at_di" bpmnElement="VerteilePopkornTask">
         <dc:Bounds x="720" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0t7tl6k_di" bpmnElement="Gateway_0gtbu2n">
@@ -144,16 +144,16 @@
       <bpmndi:BPMNShape id="Gateway_0jdihpz_di" bpmnElement="Gateway_1wygwx4">
         <dc:Bounds x="885" y="165" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_15ov9qx_di" bpmnElement="Activity_1vo2sry">
+      <bpmndi:BPMNShape id="Activity_15ov9qx_di" bpmnElement="ZeigeAusgangTask">
         <dc:Bounds x="720" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_06nl66s_di" bpmnElement="Event_06nl66s" bioc:stroke="#000" bioc:fill="#fff">
+      <bpmndi:BPMNShape id="Event_06nl66s_di" bpmnElement="FilmGezeigtEndEvent" bioc:stroke="#000" bioc:fill="#fff">
         <dc:Bounds x="992" y="172" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="980" y="215" width="61" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_19507g1_di" bpmnElement="Event_19507g1" bioc:stroke="#000" bioc:fill="#fff">
+      <bpmndi:BPMNShape id="Event_19507g1_di" bpmnElement="FilmVerweigertEndEvent" bioc:stroke="#000" bioc:fill="#fff">
         <dc:Bounds x="992" y="432" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="972" y="475" width="76" height="14" />
