@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_00bfx9e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:collaboration id="Collaboration_12djvka">
+    <bpmn:participant id="Participant_055s04j" name="HELLO.CAMUNDA.EMBEDDED" processRef="HELLO.CAMUNDA.EMBEDDED" />
+  </bpmn:collaboration>
+  <bpmn:process id="HELLO.CAMUNDA.EMBEDDED" name="" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0kfev9u</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0kfev9u" sourceRef="StartEvent_1" targetRef="Activity_0tmplqb" />
+    <bpmn:userTask id="Activity_0tmplqb" name="Erfasse Daten" camunda:asyncBefore="true" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="saalValue">${saal}</camunda:outputParameter>
+          <camunda:outputParameter name="alterValue">${alter}</camunda:outputParameter>
+          <camunda:outputParameter name="vornameValue">${vorname}</camunda:outputParameter>
+        </camunda:inputOutput>
+        <camunda:formData>
+          <camunda:formField id="vorname" label="Vorname" type="string" defaultValue="Max" />
+          <camunda:formField id="alter" label="Alter" type="long" />
+          <camunda:formField id="saal" label="Film" type="enum">
+            <camunda:value id="KINO_1" name="König der Löwen (ab 6)" />
+            <camunda:value id="KINO_2" name="Der Herr der Ringe (ab 12)" />
+            <camunda:value id="KINO_3" name="Das Kettensägenmassaker (ab 18)" />
+            <camunda:value id="KINO_4" name="- heute keine Vorstellung -" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kfev9u</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yb8btm</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1yb8btm" sourceRef="Activity_0tmplqb" targetRef="Activity_1u0638w" />
+    <bpmn:sequenceFlow id="Flow_1dpglc3" sourceRef="Activity_1u0638w" targetRef="Gateway_0gtbu2n" />
+    <bpmn:sequenceFlow id="Flow_1rlkdta" sourceRef="Event_0cwim2t" targetRef="Activity_1vo2sry" />
+    <bpmn:sequenceFlow id="Flow_0damwg9" sourceRef="Activity_1vo2sry" targetRef="Event_19507g1" />
+    <bpmn:sequenceFlow id="Flow_1bh53r4" sourceRef="Activity_11hk3nr" targetRef="Gateway_1wygwx4" />
+    <bpmn:serviceTask id="Activity_1u0638w" name="Prüfe Alter" camunda:delegateExpression="${pruefeAlterDelegate}">
+      <bpmn:incoming>Flow_1yb8btm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dpglc3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_0cwim2t" attachedToRef="Activity_1u0638w">
+      <bpmn:outgoing>Flow_1rlkdta</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0ja4fcs" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0cfgr2e" sourceRef="Gateway_0gtbu2n" targetRef="Activity_11hk3nr" />
+    <bpmn:serviceTask id="Activity_11hk3nr" name="Zeige Film" camunda:asyncBefore="true" camunda:delegateExpression="${zeigeFilmDelegate}">
+      <bpmn:incoming>Flow_0cfgr2e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bh53r4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1exnz5z" sourceRef="Gateway_1wygwx4" targetRef="Event_06nl66s" />
+    <bpmn:sequenceFlow id="Flow_0klqga2" sourceRef="Gateway_0gtbu2n" targetRef="Activity_194l493" />
+    <bpmn:sequenceFlow id="Flow_1qn0qg7" sourceRef="Activity_194l493" targetRef="Gateway_1wygwx4" />
+    <bpmn:serviceTask id="Activity_194l493" name="Verteile Popkorn" camunda:asyncBefore="true" camunda:delegateExpression="${verteilePopkornDelegate}">
+      <bpmn:incoming>Flow_0klqga2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qn0qg7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="Gateway_0gtbu2n">
+      <bpmn:incoming>Flow_1dpglc3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cfgr2e</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0klqga2</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Gateway_1wygwx4">
+      <bpmn:incoming>Flow_1bh53r4</bpmn:incoming>
+      <bpmn:incoming>Flow_1qn0qg7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1exnz5z</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Activity_1vo2sry" name="Zeige Ausgang" camunda:asyncBefore="true" camunda:delegateExpression="${zeigeAusgangDelegate}">
+      <bpmn:incoming>Flow_1rlkdta</bpmn:incoming>
+      <bpmn:outgoing>Flow_0damwg9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_06nl66s" name="Film gezeigt">
+      <bpmn:incoming>Flow_1exnz5z</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_19507g1" name="Film verweigert">
+      <bpmn:incoming>Flow_0damwg9</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_12djvka">
+      <bpmndi:BPMNShape id="Participant_055s04j_di" bpmnElement="Participant_055s04j" isHorizontal="true">
+        <dc:Bounds x="129" y="100" width="951" height="430" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0kfev9u_di" bpmnElement="Flow_0kfev9u">
+        <di:waypoint x="238" y="190" />
+        <di:waypoint x="290" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yb8btm_di" bpmnElement="Flow_1yb8btm">
+        <di:waypoint x="390" y="190" />
+        <di:waypoint x="450" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dpglc3_di" bpmnElement="Flow_1dpglc3">
+        <di:waypoint x="550" y="190" />
+        <di:waypoint x="615" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rlkdta_di" bpmnElement="Flow_1rlkdta">
+        <di:waypoint x="550" y="248" />
+        <di:waypoint x="550" y="450" />
+        <di:waypoint x="720" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0damwg9_di" bpmnElement="Flow_0damwg9">
+        <di:waypoint x="820" y="450" />
+        <di:waypoint x="992" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bh53r4_di" bpmnElement="Flow_1bh53r4">
+        <di:waypoint x="820" y="190" />
+        <di:waypoint x="885" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cfgr2e_di" bpmnElement="Flow_0cfgr2e">
+        <di:waypoint x="665" y="190" />
+        <di:waypoint x="720" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1exnz5z_di" bpmnElement="Flow_1exnz5z">
+        <di:waypoint x="935" y="190" />
+        <di:waypoint x="992" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0klqga2_di" bpmnElement="Flow_0klqga2">
+        <di:waypoint x="640" y="215" />
+        <di:waypoint x="640" y="320" />
+        <di:waypoint x="720" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qn0qg7_di" bpmnElement="Flow_1qn0qg7">
+        <di:waypoint x="820" y="320" />
+        <di:waypoint x="910" y="320" />
+        <di:waypoint x="910" y="215" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="202" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ifqi42_di" bpmnElement="Activity_0tmplqb">
+        <dc:Bounds x="290" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_044ms7h_di" bpmnElement="Activity_1u0638w">
+        <dc:Bounds x="450" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1k5xui9_di" bpmnElement="Activity_11hk3nr">
+        <dc:Bounds x="720" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10gy6at_di" bpmnElement="Activity_194l493">
+        <dc:Bounds x="720" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0t7tl6k_di" bpmnElement="Gateway_0gtbu2n">
+        <dc:Bounds x="615" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jdihpz_di" bpmnElement="Gateway_1wygwx4">
+        <dc:Bounds x="885" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15ov9qx_di" bpmnElement="Activity_1vo2sry">
+        <dc:Bounds x="720" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06nl66s_di" bpmnElement="Event_06nl66s" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="992" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="980" y="215" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19507g1_di" bpmnElement="Event_19507g1" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="992" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="972" y="475" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1eaq328_di" bpmnElement="Event_0cwim2t">
+        <dc:Bounds x="532" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
